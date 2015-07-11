@@ -1,3 +1,5 @@
+package inaction
+
 import com.mongodb.MongoClient
 
 class MongoClientWrapper(val host: String, val port: Int) {

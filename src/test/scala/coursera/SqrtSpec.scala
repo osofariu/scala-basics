@@ -1,4 +1,6 @@
-import org.scalatest.{Matchers, FlatSpec}
+package coursera
+
+import org.scalatest.{FlatSpec, Matchers}
 
 class SqrtSpec extends FlatSpec with Matchers {
   def precision = 0.001
