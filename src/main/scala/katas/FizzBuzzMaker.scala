@@ -21,7 +21,7 @@ class FizzBuzzMaker(inputRange:Range) {
   def buzz  = new Buzz()
   def fizzBuzz = new FizzBuzz()
 
-  def transform(i: Int): String = {
+  val transform : Int => String = (i : Int) => {
     if (fizzBuzz.is(i)) fizzBuzz.convert()
     else if (fizz.is(i)) fizz.convert()
     else if (buzz.is(i)) buzz.convert()
