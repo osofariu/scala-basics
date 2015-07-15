@@ -28,5 +28,5 @@ class FizzBuzzMaker(inputRange:Range) {
     else i.toString
   }
   
-  def make() : List[String]  = inputRange.map(transform(_)).toList
+  def make()  = for (i <- inputRange) yield  transform(i)
 }
