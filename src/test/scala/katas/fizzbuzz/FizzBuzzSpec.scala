@@ -1,4 +1,4 @@
-package katas
+package katas.fizzbuzz
 
 import org.scalatest.{FlatSpec, Matchers}
 

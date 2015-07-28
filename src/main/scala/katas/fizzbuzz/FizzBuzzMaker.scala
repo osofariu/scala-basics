@@ -1,4 +1,4 @@
-package katas
+package katas.fizzbuzz
 
 class FizzBuzzMaker(inputRange:Range) {
 

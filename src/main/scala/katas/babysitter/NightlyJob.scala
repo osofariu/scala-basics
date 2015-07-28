@@ -12,12 +12,19 @@ class NightlyJob(private var _startTime: Int, private var _endTime: Int, private
     else aTime
   }
 
+  def firstShiftPay(): Int = {
+    12 * (bedTime.min(endTime) - startTime.min(bedTime))
+  }
+
   def secondShiftPay() = {
     8 * (12 - bedTime.min(12))
   }
 
+  def thirdShiftPay() = {
+    16 * (endTime.max(12) - 12)
+  }
 
-  def firstShiftPay(): Int = {
-    12 * (bedTime.min(endTime) - startTime.min(bedTime))
+  def pay() = {
+    firstShiftPay() + secondShiftPay() + thirdShiftPay()
   }
 }
