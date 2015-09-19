@@ -13,6 +13,19 @@ class ScratchSpec extends FlatSpec with Matchers {
     printf(l.mkString("[", ",", "]"))
   }
 
+
+  "Y experiments" should "reveal how the Y combinator works" in {
+
+
+    def fact(n : Int) : Int = {if (n == 0) 1 else n * fact(n-1)}
+
+    fact(5) should be(120)
+
+
+
+  }
+
+
   def makeAndPrintTimezoneIds() : Array[String]= {
     getAvailableIDs.toStream.filter(id => id.contains("America/")).map(id => id.stripPrefix("America/")).toArray
   }

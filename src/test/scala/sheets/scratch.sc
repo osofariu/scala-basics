@@ -17,5 +17,10 @@ mutableScores("Alice") = 12
 mutableScores += (("James", 1))
 mutableScores += ("Brad" -> 15)
 val newScores = scores + ("Alice" -> 11) // how to change immutable map by creating new one
-
 newScores.mapValues(e => e * 2)
+
+class Foo (x: Int, y: Int)
+
+val foo = new Foo(1, 2)
+
+"ABC".split("").reduce(_+_)
