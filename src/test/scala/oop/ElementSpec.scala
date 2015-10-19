@@ -29,17 +29,18 @@ class ElementSpec extends FlatSpec with Matchers {
     val e2 = element("justice") above element("and ever")
     val ee2 = e beside e2
     ee2.height should equal(2)
-    ee2.items(0) should equal("puppy..|justice.")
+    ee2.items(0) should equal("puppy..|justice")
     ee2.items(1) should equal("forever|and ever")
   }
 
   "element of height 2 beside another element of height 1" should "create element with height to 2 with text intermingled" in {
-    val e = element("puppy") above element("justice.")
+    val e = element("puppy") above element("justice")
     val e2 = element("forever")
     val ee2 = e beside e2
+    println(ee2)
     ee2.height should equal(2)
-    ee2.items(0) should equal("puppy...|forever")
-    ee2.items(1) should equal("justice.|.......")
+    ee2.items(0) should equal("puppy..|forever")
+    ee2.items(1) should equal("justice|")
   }
 
   "complex elements" should "x" in {
