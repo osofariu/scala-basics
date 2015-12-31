@@ -75,8 +75,8 @@ object Element {
 
 
   def main (args: Array[String] ) {
-    val e1 = elem("Hello")
-    val e2 = elem(Array("Hi", "There", "Mister"))
+    val e1 = elem(Array("tomorrow", "hello"))
+    val e2 = elem(Array("introspection", "There", "Mister"))
     val e3 = elem("left")
     val e4 = elem("right")
 

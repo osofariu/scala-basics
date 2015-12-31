@@ -1,36 +1,14 @@
-import java.lang.Exception
-import scala.collection.mutable.ArrayBuffer
-val buf = ArrayBuffer(1, 7, 2, 9).sortWith((a, b) => a < b)
-buf(0)
-val buf2 = ArrayBuffer(1, 7, 2, 9).sorted
-List("Steve", "Tom", "John", "Bob").sortWith(_.compareTo(_) < 0)
-val ints = Array(1, 7, 2, 9)
-ints.mkString("<", ",", ">")
-scala.util.Sorting.quickSort(ints)
-ints.mkString("<", ",", ">")
-val scores = Map("Alice" -> 10, "Bob" -> 3, "Cindy" -> 8)
-scores("Alice") // cannot change values or arr new ones
+private def modifiers =  Map(1 -> -5, 2 -> -4, 3-> -4, 4 -> -3, 5 -> -3,
+  6 -> -2, 7 -> -2, 8 -> -1, 9 -> -1, 10 -> 0,
+  11 -> 0, 12 -> 1, 13 -> 1, 14 -> 2, 15 -> 2,
+  16 -> 3, 17 -> 3, 18 -> 4, 19 -> 4, 20 -> 5)
 
-val mutableScores = scala.collection.mutable.Map(("Alice", 10), ("Bob", 11))
-mutableScores("Alice") = 12
-mutableScores += (("James", 1))
-mutableScores += ("Brad" -> 15)
-val newScores = scores + ("Alice" -> 11) // how to change immutable map by creating new one
-newScores.mapValues(e => e * 2)
-class Foo (x: Int, y: Int)
-val foo = new Foo(1, 2)
-"ABC".split("").reduce(_+_)
-List('a','b','c','d').zipWithIndex
-val weird3 = if (util.Random.nextBoolean()) 1 else "tastes great"
-val v = "1a"
-val s = try {Option(v.toInt)} catch {case e:Exception => 0}
-val quietWords = List("let's", "transform", "some", "collections")
-val noisyWords = for (word <- quietWords) yield word.toUpperCase
+def ditto(value: Int) : Int = {
+    Math.floor((value - 10) / 2.0).toInt
+}
 
-val salutations = for {
-  hello <- List("hello", "greetings")
-  world <- List("world", "interwebs")
-  salutation = "%s %s!".format(hello, world)
-  if salutation.length < 20 // tl;dr
-} yield salutation
-val englishOrNot =  ("șoptesc" forall { '\u0020' to '\u007F' contains _ })
+(1 to 20).foreach { i =>
+  println("expected:" + modifiers(i) + " actual: " + ditto(i))
+  assert(modifiers(i) == ditto(i))
+}
+Math.floor(-3.5)

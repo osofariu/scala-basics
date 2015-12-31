@@ -14,7 +14,7 @@ class ElementSpec extends FlatSpec with Matchers {
   "element put beside another element" should "create another element that has the text of both elements and height 1" in {
     val e = element("puppy") beside element("justice")
     println(e)
-    e.width should equal(13)
+    e.width should equal(12)
     e.height should equal(1)
   }
 
@@ -24,13 +24,19 @@ class ElementSpec extends FlatSpec with Matchers {
     e.height should equal(2)
   }
 
+  "element put above aother element" should "center the shorter element with spaces on either side" in  {
+    val e = element("in") above element("perpetuity")
+    println(e)
+    e.items(0) should equal("    in    ")
+  }
+
   "element of height 2 beside another element of height 2" should "create element with height to 2 with text intermingled" in {
     val e = element("puppy") above element("forever")
     val e2 = element("justice") above element("and ever")
     val ee2 = e beside e2
     ee2.height should equal(2)
-    ee2.items(0) should equal("puppy..|justice")
-    ee2.items(1) should equal("forever|and ever")
+    ee2.items(0) should equal(" puppy justice")
+    ee2.items(1) should equal("foreverand ever")
   }
 
   "element of height 2 beside another element of height 1" should "create element with height to 2 with text intermingled" in {
@@ -39,8 +45,8 @@ class ElementSpec extends FlatSpec with Matchers {
     val ee2 = e beside e2
     println(ee2)
     ee2.height should equal(2)
-    ee2.items(0) should equal("puppy..|forever")
-    ee2.items(1) should equal("justice|")
+    ee2.items(0) should equal(" puppy forever")
+    ee2.items(1) should equal("justice      ")
   }
 
   "complex elements" should "x" in {

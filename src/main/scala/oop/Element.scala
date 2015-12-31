@@ -11,7 +11,8 @@ abstract class Element {
   def width = items.foldLeft(0)((i, s) => math.max(i, s.length))
 
   def above(other: Element) = {
-    element(this.items ++ other.items)
+    val maxLength = Math.max(items.max.length, other.items.max.length)
+    element(items.map(widen(_, maxLength)) ++ other.items.map(widen(_, maxLength)))
   }
 
   def beside(other: Element) = {
@@ -19,14 +20,16 @@ abstract class Element {
     val otherHeightened= other.heighten(this.height)
 
     element(for (p <- meHeightened.items zip otherHeightened.items)
-      yield widen(p._1, this.width) + '|' + p._2)
+      yield widen(p._1, this.width) + p._2)
   }
 
   private def widen(str: String, width: Int): String = {
     if (str.length >= width)
       str
-    else
-      str ++ "." * (width - str.length)
+    else {
+      val halfSpaces = " " * ((width - str.length) / 2)
+      halfSpaces ++ str ++ halfSpaces
+    }
   }
 
   private def heighten(height: Int): Element = {
