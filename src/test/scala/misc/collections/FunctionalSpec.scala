@@ -1,19 +1,54 @@
 package misc.collections
 
-import org.scalatest.{Matchers, FlatSpec}
+import org.scalatest.{path, Matchers}
 
-class FunctionalSpec extends FlatSpec with Matchers {
+class FunctionalSpec extends path.FunSpec with Matchers {
 
-  "Looping Ints" should "allow me to add them" in {
-    (1 to 5).reduce(_+_) should equal(15)
-  }
+  describe("Ugly cases") {
 
-  "Looping Ints with Function" should "allow me to apply function to reduce them" in {
+    it("Ugly casts example shows how explicit you need to be to help Scala figure out types")  {
+      val map: Map[Option[Any], List[Any]] = Map(
+        Some("foo") -> List("foo", "bar", "baz"),
+        Some(42) -> List(1, 2, 3, 4),
+        Some(true) -> List(true, false, true))
 
-    def min (i : Int, j: Int) : Boolean = {i <= j}
+      // type of Option is consistent with type of value, but Scala doesn't kwow that constraint!
 
-    (23 to 25 ).foldLeft(23) {(acc, i) => if (acc <= i) acc else i} should equal(23)
-    (23 to 30).reduceLeft {(first, second) => if (first <= second) first else second} should equal(23)
-    //(23 to 25).reduceLeft {min} should equal(23)
+      val xs: List[String] = map(Some("foo")).asInstanceOf[List[String]]
+      assert (xs === List("foo", "bar", "baz"))
+
+      val ys: List[Int] = map(Some(42)).asInstanceOf[List[Int]]
+      assert (ys === List(1, 2, 3, 4))
+
+      // you can do this, but x is of type List[Any]
+      val x = map(Some("foo"))
+    }
+
+    // HOMap : (( * => *) x (* => *)) => *
+    class HOMap[K[_], V[_]](delegate: Map[K[Any], V[Any]]) {
+      def apply[A](key: K[A]): V[A] =
+        delegate(key.asInstanceOf[K[Any]]).asInstanceOf[V[A]]
+    }
+
+    object HOMap {
+      type Pair[K[_], V[_]] = (K[A], V[A]) forSome {type A}
+      //def apply[K[_], V[_]](tuples: Pair[K, V]*) = new HOMap[K, V](Map(tuples: _*))
+    }
+
+
+    //it("Improves dramatically if you can help Scala determine types") {
+    //  val map: HOMap[Option, List] = HOMap[Option, List]
+       // Some("foo") -> List("foo", "bar", "baz"),
+       // Some(42) -> List(1, 2, 3, 4),
+       // Some(true) -> List(true, false, true))
+
+      // type of Option is consistent with type of value, but Scala doesn't kwow that constraint!
+
+      //val xs: List[String] = map(Some("foo"))
+      //assert (xs === List("foo", "bar", "baz"))
+
+      //val ys: List[Int] = map(Some(42))
+      //assert (ys === List(1, 2, 3, 4))
+    //}
   }
 }

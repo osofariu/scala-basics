@@ -12,7 +12,6 @@ class OOSpec extends FlatSpec with Matchers {
   }
 
   object ListOfPairs {
-
     def apply(l: List[Int]): ListOfPairs = l match {
       case Nil => new ListOfPairs(Nil)
       case first :: second :: rest =>  combine(new ListOfPairs(first, second), apply(rest))
