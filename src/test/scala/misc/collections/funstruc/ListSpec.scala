@@ -1,53 +1,8 @@
 package misc.collections.funstruc
 
-import misc.collections.funstruc.List.{len, tail, head, tailOpt, setHead, drop}
+import misc.collections.funstruc.List._
 import org.scalatest.{Matchers, path}
 
-sealed trait List[+A]
-case object Nil extends List[Nothing]
-case class Cons[+A](head: A, tail: List[A]) extends List[A]
-
-object List {
-
-  def head[A](l: List[A]) : A = l match {
-    case Nil => throw new RuntimeException("Cannot take head of an empty list")
-    case (Cons (head, tail)) => head
-  }
-
-  def tail[A](l: List[A]) : List[A]= l match {
-    case Nil => throw new RuntimeException("Cannot tail an empty list")
-    case Cons(head, tail) => tail
-  }
-
-  def tailOpt[A](l: List[A]) : Option[List[A]] = l match {
-    case Nil => Option.empty
-    case Cons(head, tail) => Option(tail)
-  }
-
-  def setHead[A](a: A, l:List[A]) = {
-    Cons(a, tail(l))
-  }
-
-  def drop[A](l: List[A], n: Int): List[A] = n match {
-    case 0 => l
-    case n => drop(tail(l), n - 1)
-  }
-
-  def sum(l: List[Int]): Int = l match {
-    case Nil => 0
-    case Cons(head, tail) => head + sum(tail)
-  }
-
-  def len[A](l: List[A]) : Int = l match {
-    case Nil => 0
-    case Cons(head, tail) => 1 + len(tail)
-  }
-
-  def apply[A](l: A*): List[A] = {
-    if (l.isEmpty) Nil
-    else Cons(l.head, apply(l.tail: _*))
-  }
-}
 
 class ListSpec extends path.FunSpec with Matchers {
 
@@ -101,10 +56,18 @@ class ListSpec extends path.FunSpec with Matchers {
       head(List("one", "two", "three")) shouldBe "one"
     }
 
+    it("can even call head directly on a List") {
+      List(32, 1, 2, 3).head shouldBe 32
+    }
+
     it("has a size") {
       len(List()) shouldBe 0
       len(List(1)) shouldBe 1
       len(List(1, 2, 3, 4, 5)) shouldBe 5
+    }
+
+    it("can check size directly on list") {
+      List(1, 2, 3, 4, 5, 5).len shouldBe 6
     }
   }
 }
