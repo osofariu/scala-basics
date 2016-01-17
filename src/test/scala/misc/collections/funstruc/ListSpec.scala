@@ -7,9 +7,7 @@ import org.scalatest.{Matchers, path}
 class ListSpec extends path.FunSpec with Matchers {
 
   describe("List") {
-
     describe("sum") {
-
       it("of empty list is 0") {
         sum(Nil) shouldBe 0
       }
