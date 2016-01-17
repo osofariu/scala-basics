@@ -1,17 +1,15 @@
 package misc.collections.funstruc
 
-sealed trait List[+A] {
-  def head : A
-  def len: Int
+sealed trait List[+T] {
+  def foldLeft[A](acc: A)(f: (A, T) => A) : A
 }
 
 case object Nil extends List[Nothing] {
-  override def head: Nothing = ???
-  override def len: Int = ???
+  override def foldLeft[A](acc: A)(f: (A, Nothing) => A): A = acc
 }
 
-case class Cons[+A](head: A, tail: List[A]) extends List[A] {
-  override def len: Int = ???
+case class Cons[+T](head: T, tail: List[T]) extends List[T] {
+  override def foldLeft[A](acc: A)(f: (A, T) => A): A = tail.foldLeft(f(acc, head))(f)
 }
 
 object List {
@@ -25,24 +23,23 @@ object List {
     case Nil => throw new RuntimeException("Cannot tail an empty list")
     case Cons(head, tail) => tail
   }
-
-  def tailOpt[A](l: List[A]) : Option[List[A]] = l match {
-    case Nil => Option.empty
-    case Cons(head, tail) => Option(tail)
-  }
-
+  
   def setHead[A](a: A, l:List[A]) = {
     Cons(a, tail(l))
   }
 
-  def drop[A](l: List[A], n: Int): List[A] = n match {
-    case 0 => l
-    case n => drop(tail(l), n - 1)
+  def drop[A](l: List[A], n: Int): List[A] = {
+    if (n == 0) l
+    else drop(tail(l), n - 1)
   }
 
   def sum(l: List[Int]): Int = l match {
     case Nil => 0
     case Cons(head, tail) => head + sum(tail)
+  }
+
+  def sum[_](l: List[_]) = {
+
   }
 
   def len[A](l: List[A]) : Int = l match {

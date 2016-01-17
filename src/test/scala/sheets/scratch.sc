@@ -1,15 +1,6 @@
-trait F {
-  def upcase: String
+
+def asInt[T](t: T) : Int = t match  {
+  case t: Int => t
+  case _ => 0
 }
-
-case class Foo(s: String) extends F
-
-object F {
-  def upCase(s: String) = s.toUpperCase()
-  def apply(s: String) = Foo(s)
-}
-
-F("hello").upcase
-
-
 
