@@ -53,10 +53,17 @@ class ListSpec extends path.FunSpec with Matchers {
     }
 
     describe("size") {
-      it("has a size for any length") {
+      it("size for any length") {
         len(List()) shouldBe 0
         len(List(1)) shouldBe 1
         len(List(1, 2, 3, 4, 5)) shouldBe 5
+      }
+    }
+
+    describe("foldLeft") {
+      it("can fold over the list") {
+        List(1, 2, 3).foldLeft(0)((acc, a) => acc + a) shouldBe 6
+        List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).foldLeft(0)((a, i) => a + 2 * i) shouldBe 110
       }
     }
   }
