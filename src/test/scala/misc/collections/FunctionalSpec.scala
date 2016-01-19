@@ -2,6 +2,8 @@ package misc.collections
 
 import org.scalatest.{path, Matchers}
 
+import scala.language.higherKinds
+
 class FunctionalSpec extends path.FunSpec with Matchers {
 
   describe("Ugly cases") {

@@ -4,7 +4,7 @@ import org.scalatest.{path, Matchers}
 
 class SimpleExtSpec extends path.FunSpec with Matchers{
 
-  describe("Greet examples") {
+  describe("Greet examples - using existential types to preserve types") {
 
     case class Greets[T](private val name: T) {
       def hello(): Unit = println("Hello " + name)

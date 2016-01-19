@@ -4,25 +4,27 @@ import org.scalatest.{path, Matchers}
 
 class ExtSpec extends path.FunSpec with Matchers {
 
+
+  trait VirtualMachine[A] {
+    def compile: A
+    def run: A => Int
+    def something : this.type
+  }
+
+  case class SimpleVirtualMachine[A](compile: A, run: A => Int)
+    extends VirtualMachine[A] {
+    override def something: SimpleVirtualMachine.this.type = this
+  }
+
+  def helloWorldVM(s: String) = SimpleVirtualMachine(s, (s: String) => 10)
+  def intVM(i: Int) = SimpleVirtualMachine(i, (s: Int) => 10)
+
+  def compileAndRun1[A](vm: VirtualMachine[A]) = vm.run(vm.compile)
+  def compileAndRun2(vm: VirtualMachine[A forSome {type A}]) = vm.run(vm.compile)
+
+  // won't compile
+  //def compileAndRun3(vm: VirtualMachine[A] forSome {type A}) = vm.run(vm.compile)
   describe("Virtual Machine"){
-
-    trait VirtualMachine[A] {
-      def compile: A
-      def run: A => Int
-    }
-
-    case class SimpleVirtualMachine[A](compile: A, run: A => Int)
-      extends VirtualMachine[A]
-
-    def helloWorldVM(s: String) = SimpleVirtualMachine(s, (s: String) => 10)
-    def intVM(i: Int) = SimpleVirtualMachine(i, (s: Int) => 10)
-
-    def compileAndRun1[A](vm: VirtualMachine[A]) = vm.run(vm.compile)
-    def compileAndRun2(vm: VirtualMachine[A forSome {type A}]) = vm.run(vm.compile)
-
-    // won't compile
-    //def compileAndRun3(vm: VirtualMachine[A] forSome {type A}) = vm.run(vm.compile)
-
 
     it("can compileAndRun1 on SimpleVirtualMachine") {
       val comp = "stuff"
@@ -37,8 +39,14 @@ class ExtSpec extends path.FunSpec with Matchers {
     }
   }
 
-  describe("other") {
+  describe("SimpleVirtualMachine") {
+    it("something") {
+      val svm = new SimpleVirtualMachine[String]("Hello",  (a: String) => 1)
+      svm.something shouldBe "foo"
+    }
+  }
 
+  describe("calculating length for lists containing type that extends HasLength") {
 
     trait HasLength {
       def length : Int
@@ -52,6 +60,7 @@ class ExtSpec extends path.FunSpec with Matchers {
       l.foldLeft(0)((acc, v) => acc + v.length)
     }
 
+    // TODO: which one is right in general above or below?
     def lengths2(l: List[T forSome {type T <: HasLength}]) : Int = {
       l.foldLeft(0)((acc, v) => acc + v.length)
     }
