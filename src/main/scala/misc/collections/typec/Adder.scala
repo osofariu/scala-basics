@@ -2,6 +2,8 @@ package misc.collections.typec
 
 import misc.collections.funstruc.{List => FunList}
 
+import scala.language.higherKinds
+
 trait Adder[T] {
   def zero: T
   def add(v1: T, v2: T): T

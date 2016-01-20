@@ -20,7 +20,7 @@ trait Robot extends Lasers
 trait Humanoid
 trait Lasers
 
-object X extends Robot with Humanoid with Lasers
+object X extennds Robot with Humanoid with Lasers
 
 /*
 This works find under Scala WorkSheets but not in a ScalaTest

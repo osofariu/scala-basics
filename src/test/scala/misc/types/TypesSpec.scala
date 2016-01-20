@@ -33,13 +33,17 @@ class TypesSpec extends path.FunSpec with Matchers {
         def receive(a: String): String
       }
 
-      def send(msg: String, box: MailBoxLike) : String = box receive msg
+      def send(msg: String, box: MailBoxLike): String = box receive msg
 
       // don't actually need to use type alias here:
-      def send2(msg: String, box: {def receive(msg: String) : String}) = box receive msg
+      def send2(msg: String, box: {def receive(msg: String): String}) = box receive msg
 
-      object Home {def receive(a: String) = s"HOME: $a"}
-      object Work {def receive(a: String) = s"WORK: $a"}
+      object Home {
+        def receive(a: String) = s"HOME: $a"
+      }
+      object Work {
+        def receive(a: String) = s"WORK: $a"
+      }
 
       send("hello at home", Home) shouldBe "HOME: hello at home"
       send("Hello at work", Work) shouldBe "WORK: Hello at work"
@@ -110,6 +114,38 @@ class TypesSpec extends path.FunSpec with Matchers {
         def cagedLion = new LionCage
         //def cagedAnimal: AnimalCage[Animal] = cagedLion         // does NOT compile
       }
+    }
+  }
+
+  describe("Functor and map") {
+    trait Functor[List[_]] {
+      def map[Int, String](fn: Int => String)
+                          (fa: List[Int]): List[String]
+    }
+
+    val functor = new Functor[List] {
+      def map[String, Int]
+      (f: String => Int)
+      (fa: List[String])
+      : List[Int] = fa map f // implement myself instead
+    }
+
+    it("can run map over list of Strings") {
+      functor.map((str: String) => str.length)(List[String]("Hi", "there")) shouldBe List(2, 5)
+
+    }
+
+    it("can be more general?") {
+      trait Functor[F[_]] {
+        def map[A, B](fn: A => B)(fa: F[A]): F[B]
+      }
+
+      val functor = new Functor[List] {
+        def map[String, Int](f: String => Int)(fa: List[String]): List[Int] = {
+          for (s <- fa) yield f(s)
+        }
+      }
+      functor.map((str: String) => str.length)(List[String]("Hi", "there")) shouldBe List(2, 5)
     }
   }
 }

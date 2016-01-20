@@ -39,13 +39,6 @@ class ExtSpec extends path.FunSpec with Matchers {
     }
   }
 
-  describe("SimpleVirtualMachine") {
-    it("something") {
-      val svm = new SimpleVirtualMachine[String]("Hello",  (a: String) => 1)
-      svm.something shouldBe "foo"
-    }
-  }
-
   describe("calculating length for lists containing type that extends HasLength") {
 
     trait HasLength {
@@ -76,7 +69,6 @@ class ExtSpec extends path.FunSpec with Matchers {
       lengths2(List[Foo](Foo("hello"), Foo("there"))) shouldBe 10
     }
   }
-
 
   describe("function arguments are contravariant and return types are covariant") {
 

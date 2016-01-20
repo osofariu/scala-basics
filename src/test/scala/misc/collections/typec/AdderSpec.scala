@@ -35,5 +35,11 @@ class AdderSpec extends org.scalatest.path.FunSpec with Matchers {
         sum(FunList("foo", "bar")) shouldBe "foobar"
       }
     }
+
+    describe("with generic List") {
+      it("adds Int types") {
+        sum(FunList(1, 2, 3, 4)) shouldBe 10
+      }
+    }
   }
 }
