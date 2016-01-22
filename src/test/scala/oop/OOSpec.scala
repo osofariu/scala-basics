@@ -1,6 +1,6 @@
-package preso.collections
+package oop
 
-import org.scalatest.{Matchers, FlatSpec}
+import org.scalatest.{FlatSpec, Matchers}
 
 class OOSpec extends FlatSpec with Matchers {
 

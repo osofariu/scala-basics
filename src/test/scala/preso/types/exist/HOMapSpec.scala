@@ -1,23 +1,23 @@
-package preso.collections
+package preso.types.exist
 
-import org.scalatest.{path, Matchers}
+import org.scalatest.{Matchers, path}
 
 import scala.language.{existentials, higherKinds}
 
-class FunctionalSpec extends path.FunSpec with Matchers {
+class HOMapSpec extends path.FunSpec with Matchers {
 
-  describe("Ugly cases") {
+  describe("a map from Option of T to List of T, where they always refer to the same type") {
 
-    // type of Option is consistent with type of value, but Scala doesn't kwow that constraint!
     val map: Map[Option[Any], List[Any]] = Map(
       Some("foo") -> List("foo", "bar", "baz"),
       Some(42) -> List(1, 2, 3, 4),
       Some(true) -> List(true, false, true))
 
-    it("Ugly casts example shows how explicit you need to be to help Scala figure out types") {
+    it("allows you to get values out of the map, but you have to cast them to expected type") {
 
-      // we want to say:
+      // we WANT to say:
       // val xs: List[String] = map(Some("foo"))  // Compilation error: Expression of type List[Any] doesn't conform to type List[String]
+      // BECAUSE: you cannot assign a List[Any] to a List[String] because Any can contain types that cannot be mapped to String (1, Boolean, etc.)
 
       val xs: List[String] = map(Some("foo")).asInstanceOf[List[String]]
       assert(xs === List("foo", "bar", "baz"))
@@ -31,7 +31,7 @@ class FunctionalSpec extends path.FunSpec with Matchers {
 
   }
 
-  describe("Some help from higher types") {
+  describe("With some help from higher types you can eliminate the need to cast") {
 
     // HOMap : (( * => *) x (* => *)) => *
     class HOMap[K[_], V[_]](delegate: Map[K[_], V[_]]) {

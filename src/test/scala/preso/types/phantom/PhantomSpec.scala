@@ -1,4 +1,4 @@
-package preso.collections.phantom
+package preso.types.phantom
 
 import org.scalatest.{Matchers, path}
 
