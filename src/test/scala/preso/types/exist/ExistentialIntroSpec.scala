@@ -1,6 +1,7 @@
 package preso.types.exist
 
-import org.scalatest.{path, Matchers}
+import org.scalatest.{Matchers, path}
+
 import scala.language.existentials
 
 class ExistentialIntroSpec extends path.FunSpec with Matchers{
@@ -22,21 +23,7 @@ class ExistentialIntroSpec extends path.FunSpec with Matchers{
       greetsList.tail.head.getName.getClass.getSimpleName shouldBe "Symbol"
     }
 
-    // Question:  If you wanted to return this list to someone, what type of
-    //            list would they have to declare?
 
-
-    // This does NOT compile:
-    //val greetsList2 : List[Greets[Any]] = greetsList
-
-    /*
-    Compilation error:
-    Error:(10, 50) type mismatch;
-     found   : A$A1.this.Greets[String]
-     required: A$A1.this.Greets[Any]
-    Note: String <: Any, but class Greets is invariant in type T.
-    You may wish to define T as +T instead. (SLS 4.5)
-    */
 
     // this is what Intellij has suggested to me, but it's not very generic:
     val greetsList3a: List[Greets[_ >: Char with String with Symbol]] = greetsList

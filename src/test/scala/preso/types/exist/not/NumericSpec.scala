@@ -4,8 +4,7 @@ import org.scalatest.{Matchers, path}
 
 import scala.language.implicitConversions
 
-// with matches, when you try to account for any other type received you don't need
-// to use higher types -- but you are explicitly defining each conversion
+// combining different types, and returning different types
 
 class NumericSpec extends path.FunSpec with Matchers {
 
@@ -46,7 +45,7 @@ class NumericSpec extends path.FunSpec with Matchers {
     }
 
     it("adds double to double") {
-      val v: Double = 0 + DoubleNumeric(.5) + DoubleNumeric(.5)
+      val v = 0 + DoubleNumeric(.5) + DoubleNumeric(.5)
       v shouldBe 1.0
     }
   }

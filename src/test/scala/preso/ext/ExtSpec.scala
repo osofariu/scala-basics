@@ -1,68 +1,31 @@
 package preso.ext
 
-import org.scalatest.{path, Matchers}
+import org.scalatest.{Matchers, path}
 
 import scala.language.existentials
 
 class ExtSpec extends path.FunSpec with Matchers {
 
-
-  trait VirtualMachine[A] {
-    def compile: A
-    def run: A => Int
-    def something : this.type
-  }
-
-  case class SimpleVirtualMachine[A](compile: A, run: A => Int)
-    extends VirtualMachine[A] {
-    override def something: SimpleVirtualMachine.this.type = this
-  }
-
-  def helloWorldVM(s: String) = SimpleVirtualMachine(s, (s: String) => 10)
-  def intVM(i: Int) = SimpleVirtualMachine(i, (s: Int) => 10)
-
-  def compileAndRun1[A](vm: VirtualMachine[A]) = vm.run(vm.compile)
-  def compileAndRun2(vm: VirtualMachine[A forSome {type A}]) = vm.run(vm.compile)
-
-  // won't compile
-  //def compileAndRun3(vm: VirtualMachine[A] forSome {type A}) = vm.run(vm.compile)
-  describe("Virtual Machine"){
-
-    it("can compileAndRun1 on SimpleVirtualMachine") {
-      val comp = "stuff"
-      def run[A] = (a: A) => 20
-      compileAndRun1(SimpleVirtualMachine(comp, run)) shouldBe 20
-    }
-
-    it("can compileAndRun2 on SimpleVirtualMachine") {
-      val comp = "stuff"
-      def run[A] = (a: A) => 20
-      compileAndRun2(SimpleVirtualMachine(comp, run)) shouldBe 20
-    }
-  }
-
-  describe("calculating length for lists containing type that extends HasLength") {
+  describe("calculating length for lists containing a type that extends HasLength") {
 
     trait HasLength {
       def length : Int
     }
 
-    def lengths0[T <: HasLength](l: List[T]) : Int = {
+    def length_short[T <: HasLength](l: List[T]) : Int =
       l.foldLeft(0)((acc, v) => acc + v.length)
-    }
 
-    def lengths1(l: List[T] forSome {type T <: HasLength}) : Int = {
+    def length_explicit(l: List[T] forSome {type T <: HasLength}) : Int =
       l.foldLeft(0)((acc, v) => acc + v.length)
-    }
 
-    it("adds lengths for items that have length") {
-
-      case class Foo(s: String) extends HasLength {
+    it("adds lengths for items that have length property") {
+      case class StringWrap(s: String) extends HasLength {
         override def length: Int = s.length
       }
 
-      lengths0(List[Foo](Foo("hello"), Foo("there"))) shouldBe 10
-      lengths1(List[Foo](Foo("hello"), Foo("there"))) shouldBe 10
+      val lst = List[StringWrap](StringWrap("hello"), StringWrap("there"))
+      length_short(lst) shouldBe 10
+      length_explicit(lst) shouldBe 10
     }
   }
 
