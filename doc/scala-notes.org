@@ -1,0 +1,86 @@
+
+* Higher Kids (Higher-kinded types) -- hierarchy
+
+- values have types
+- different values can have the same type
+- types sit "above" values
+- what sits "above" types? : kinds!
+
+kind systems classify types: *Values are to types as types are to kinds*
+
+These are concrete types:
+
+type Int has kind type
+type String has kind type
+type List[Int] has kind type
+type (Int => String) has kind type
+
+Notation:
+type List[Int] :: *
+
+
+What about?  List or Function1?  They are different!
+
+type List :: ???
+type Function1 :: ???
+
+you have to parametarize them with a type in order to get a type
+
+type List :: * => *  (list has type: type to type)
+type Function1 :: (* x *) => * (function has type (type cross type) to type)
+
+These are *type constructors* -- it's basically function at a type level.
+
+** Examples of constructs for values and analogous  types:
+
+// id: ((Int => Int), Int) => Int
+def id(f: Int => Int, x: Int) = f(x)
+
+// Id :: ((* => *) x *) => *
+type Id[A[_], B] = A[B]
+
+
+** Thoughts on existential types:
+
+Array[String] is NOT an Array[Any]
+..  that would mean that anything on the right side would be assignable to something on the left,
+but you can add 1 to Array[Any] and NOT to Array[String]
+
+but you can say that Array[Any] is Array[String] because it would accept any of them
+
+
+* function variance: (- is superclass; + is subclass)
+trait Function1 [-T1, +R] extends AnyRef
+
+
+*Variance: Java vs. Scala:*
+
+Scala supports variance annotations of type parameters of generic classes. In
+contrast to Java 5 (aka. JDK 1.5), variance annotations may be added when a
+class abstraction is defined, whereas in Java 5, variance annotations are given
+by clients when a class abstraction is used.
+
+* Solving diamond problem: linearization
+- https://vimeo.com/92620078 at 06:15 time
+- basically: reverse, expand, keep-right-unique, add common
+ 
+
+* About existential types
+http://www.drmaciver.com/2008/03/existential-types-in-scala/
+Examples:
+- no parametric types leads to Any, and having to cast
+- unnecessary parametric types, when we don't really care what the type of the
+  parameter is
+- existential types help put in a "placeholder" so we don't have to care
+
+This is a pretty good starting point for examples on this topic.
+
+* type classes
+http://www.drmaciver.com/2008/03/existential-types-in-scala/
+
+The difference between subtyping and parametric polymorphism and ad hoc
+polymorphism is that the type hierarchy is expressed explicitly using extends
+keyword in Scala (for subtyping) or type parameters (for parametric
+polymorphism) while ad hoc polymorphism bases itself on implicit classes to
+mixin the behaviour (using traits). And that’s pretty much all, technically.
+
