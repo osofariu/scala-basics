@@ -7,8 +7,6 @@ class V2_ExternalEvalSpec extends path.FunSpec with Matchers {
 
   describe("Expression with external Evaluators") {
 
-
-
     sealed trait Expression
     case class Number(value: Int) extends Expression
     case class Plus(lhs: Expression, rhs: Expression) extends Expression

@@ -309,7 +309,7 @@ No inheritance, both ExprEvaluator and ExprToJsonFormatter use Expression
   - Still pretty simple, and didn't have to change Expression ADT
  
 *Disadvantages:*
-  - JsonWriter expects a JsonValue, so it has not mechanism to allow clients to
+  - JsonWriter expects a JsonValue, so it has no mechanism to allow clients to
     provide converters; it would be nice to have a JsonConvertible that any type
     that implements it could be passed to a JsonWriter.
  
@@ -380,3 +380,6 @@ Here are some sites I found helpful:
 - [[http://www.drmaciver.com/2008/03/existential-types-in-scala/][Existential types in Scala]]
 - [[https://vimeo.com/28793245][High Wizardry in the Land of Scala]]
 - [[http://stackoverflow.com/questions/15186520/scala-any-vs-underscore-in-generics][Stackoverflow: Any vs _]]
+
+
+
