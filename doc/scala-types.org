@@ -19,7 +19,9 @@
   - None of the features are covered in-depth, although type classes do get
     quite a bit of attention.
 
-- Lots of examples: [[https://github.com/osofariu/scala-basics]]
+- Lots of examples.  Both the slides and code are available at:
+
+  [[https://github.com/osofariu/scala-basics]]
 
 
 * Regular Types
@@ -70,7 +72,11 @@ scala.Function1's kind is F[-A1,+A2]
 // * -(-)-> * -(+)-> *
 This is a type constructor: a 1st-order-kinded type.
 
+
 * A more complex example
+
+scala> import language.higherKinds
+import language.higherKinds
 
 scala> class Id[M[_], T](v: T)
 defined class Id
@@ -83,10 +89,6 @@ Id's kind is X[F[A1],A2]
 (* -> *) -> * -> *
 This is a type constructor that takes type constructor(s): a higher-kinded type.
 
-
-scala> import language.higherKinds
-import language.higherKinds
-
 scala> class Functor [M[_]]
 defined class Functor
 
@@ -94,6 +96,7 @@ scala> :kind -v Functor[List]
 Functor's kind is X[F[A]]
 (* -> *) -> *
 This is a type constructor that takes type constructor(s): a higher-kinded type.
+
 
 * Existential Types
 
@@ -172,6 +175,7 @@ val data:  Map[User, Age] =  Map.empty
   that type to provide
 - uses reflection, so there are performance implications
     
+
 * Making a Pair of different types (simpler example)
 
 *TupelizeSpec.scala*
