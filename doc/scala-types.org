@@ -79,6 +79,7 @@ Array[Int], etc.
 
 -- David R. MacIver: "Existential types in Scala"
 
+
 * Some simple Examples
 
 *ExistentialIntroSpec.scala*
@@ -146,6 +147,7 @@ val xs: List[String] = map(Some("foo")).asInstanceOf[List[String]]
 you cannot assign a List[Any] to a List[String] because Any can contain types
 that cannot be mapped to String (1, Boolean, etc.)
 
+
 * Type Aliases and 'Duck Typing'-like behavior
 
 ** Type aliases are supposed to make code more readable
@@ -187,14 +189,17 @@ class Cow extends Animal {
   - 'Cow' fixes its 'SuitableFood' to be 'Grass'
   - 'SuitableFood' becomes alias for class 'Grass'
 
+
 * Functional Data Types
 
+*List.scala*
 
 - List, implemented as a functional data structure
 
   - using it feels more like Lisp
 
   - will come back to it at the end, where we integrate it into a type class example.
+
 
 * Phantom Types
 
@@ -219,6 +224,7 @@ close[T >: State <: Open]()   // expects the State to be Open
 
 both open and close expect a type that's bound both upwards and downwards
 
+
 * Type Classes
 
 - A typeclass is represented by a parameterized trait, defining operations on
@@ -231,6 +237,7 @@ both open and close expect a type that's bound both upwards and downwards
   asserts that T is a member of TC[_] (similar to [T <: U])
 
   -- Credit for this definition goes to Dan Rosen
+
 
 * V1_WithTraitsSpec.scala
 
@@ -253,6 +260,7 @@ NumericConvertible and JsonConvertible
   - we had to modify Expression trait; we may not be able to do that
   - we tied together concerns about evaluating and formatting directly into the
     ADT, which is not very clean
+
 
 * V2_ExternalEvalSpec.scala
 
@@ -277,6 +285,7 @@ No inheritance, both ExprEvaluator and ExprToJsonFormatter use Expression
  *Disadvantages*
   - passing asJsonConverter along to JsonWriter is a little kludge
   
+
 * V4_WithTypeClassesSpec.scala
 
 *Creating an Implicit argument*
@@ -301,6 +310,7 @@ No inheritance, both ExprEvaluator and ExprToJsonFormatter use Expression
 
  [[~/Desktop/preso/v4_to_v5.png]]
 
+
 * Adder and List
 
 
@@ -313,8 +323,9 @@ Most of the code in this presentation has been extracted or inspired by other
 people's work.
 
 Here are some sites I found helpful:
-- http://ktoso.github.io/scala-types-of-types/
-- http://mbonaci.github.io/scala/#type-parameterization
-- https://www.youtube.com/watch?v=sVMES4RZF-8&feature=youtu.be
-- http://danielwestheide.com/blog/2013/02/06/the-neophytes-guide-to-scala-part-12-type-classes.html
-- http://www.drmaciver.com/2008/03/existential-types-in-scala/
+
+- [[http://ktoso.github.io/scala-types-of-types/][Scala types of types]]
+- [[http://mbonaci.github.io/scala/#type-parameterization][Java Developer's Scala Cheat Sheet]]
+- [[https://www.youtube.com/watch?v=sVMES4RZF-8&feature=youtu.be][Dan Rosen - Type classes]]
+- [[http://danielwestheide.com/blog/2013/02/06/the-neophytes-guide-to-scala-part-12-type-classes.html][Daniel Westheide]]
+- [[http://www.drmaciver.com/2008/03/existential-types-in-scala/][Existential types in Scala]]

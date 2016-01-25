@@ -15,10 +15,6 @@ class HOMapSpec extends path.FunSpec with Matchers {
 
     it("allows you to get values out of the map, but you have to cast them to expected type") {
 
-      // we WANT to say:
-      // val xs: List[String] = map(Some("foo"))  // Compilation error: Expression of type List[Any] doesn't conform to type List[String]
-      // BECAUSE: you cannot assign a List[Any] to a List[String] because Any can contain types that cannot be mapped to String (1, Boolean, etc.)
-
       val xs: List[String] = map(Some("foo")).asInstanceOf[List[String]]
       assert(xs === List("foo", "bar", "baz"))
 
@@ -28,7 +24,6 @@ class HOMapSpec extends path.FunSpec with Matchers {
       // you can do this, but x is of type List[Any]
       val x = map(Some("foo"))
     }
-
   }
 
   describe("With some help from higher types you can eliminate the need to cast") {
