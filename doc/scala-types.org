@@ -1,0 +1,320 @@
+* Exploring Types, Kinds, Type Classes
+
+** Motivation
+
+- Alexander's talk about Monads
+- Trying to use ScalaZ library without adequate preparation
+
+** Background
+
+- Not terribly experienced with Scala, still very much learning.
+- Not a very seasoned software developer, but working on it.
+
+** Expectation
+
+- Covering lots of material
+
+  - I hope examples give you a good idea for each feature
+
+  - None of the features are covered in-depth, although type classes do get
+    quite a bit of attention.
+
+- Lots of examples: [[https://github.com/osofariu/scala-basics]]
+
+
+* Regular Types
+
+scala> :kind -v 100
+scala.Int's kind is A
+*
+This is a proper type.
+
+scala> val x = 100
+x: Int = 100
+
+scala> :kind -v x
+scala.Int's kind is A
+*
+This is a proper type.
+
+scala> val list = List(1, 2, 3)
+lst: List[Int] = List(1, 2, 3)
+
+scala> :kind -v list
+scala.collection.immutable.List's kind is A
+*
+This is a proper type.
+
+
+* Higher Types (Kinds)
+
+scala> :kind -v List
+scala.collection.immutable.List's kind is F[+A]
+\\ * -(+)-> *
+This is a type constructor: a 1st-order-kinded type.
+
+
+scala> def f(i: Int) = i.toString
+f: (i: Int)String
+
+scala> :kind -v f(_)
+scala.Function1's kind is F[-A1,+A2]
+\\ * -(-)-> * -(+)-> *
+This is a type constructor: a 1st-order-kinded type.
+
+
+* Existential Types
+
+Sometimes we want to act on a more specific type, but don’t care exactly what
+type it is.
+
+Suppose we have a type constructor M. In other words, for a type T, M[T] is a
+type, but M is *not* itself a type. M could be List, Array, Class, etc. 
+
+M[T] forSome { type T; } is the type of all things for which there is some T
+such that they are of type M[T].
+
+So an Array[String] is of this type, because we can choose T = String, as is an
+Array[Int], etc.
+
+-- David R. MacIver: "Existential types in Scala"
+
+* Some simple Examples
+
+*ExistentialIntroSpec.scala*
+
+    *case class Greets[T](private val name: T)* {
+      def hello(): Unit = println("Hello " + name)
+      def getName: T = name
+    }
+    val greets_string: Greets[String] = Greets("John")
+    val greets_symbol: Greets[Symbol] = Greets('Jack)
+    val greetsList = List(greets_string, greets_symbol)
+    
+    // This *does not compile*:
+    
+    *val myGreetsList : List[Greets[Any]] = greetsList*
+
+    *Compilation error*
+    Error:(10, 50) type mismatch;
+     found   : A$A1.this.Greets[String]
+     required: A$A1.this.Greets[Any]
+    Note: String <: Any, but class Greets is invariant in type T.
+    You may wish to define T as +T instead. (SLS 4.5)
+
+  *Question:*  How am I supposed to be able to receive this list?
+
+
+* Some options that make it possible to get hold of greetsList:
+
+    *This is what IntelliJ has suggested to me, but it's not very generic:*
+    val greetsList: List[Greets[_ >: Char with String with Symbol]] = greetsList
+
+
+    *you use a wildcard to indicate you don't care what type Greets holds:*
+    val greetsList: List[Greets[_]] = greetsList
+
+
+    *same thing, but it's more explicit (and would allow you to set bounds on T)*
+    val greetsList: List[Greets[T] forSome {type T}] = greetsList
+
+
+
+* A useful example of Existential Types
+
+ *HOMapSpec.scala*
+
+Here's an example where you need to use existential types to describe to the
+compiler how it's supposed to interpret you types:
+
+*You want to define this Map:*
+    val map: Map[Option[Any], List[Any]] = Map(
+      Some("foo") -> List("foo", "bar", "baz"),
+      Some(42) -> List(1, 2, 3, 4),
+      Some(true) -> List(true, false, true))
+
+where the type inside the key matches the type in the value.
+
+... *and you want to say:*
+val xs: List[String] = map(Some("foo")) 
+
+... *but you are forced instead to say this:*
+val xs: List[String] = map(Some("foo")).asInstanceOf[List[String]]
+
+*How do you do it?*
+
+you cannot assign a List[Any] to a List[String] because Any can contain types
+that cannot be mapped to String (1, Boolean, etc.)
+
+* Type Aliases and 'Duck Typing'-like behavior
+
+** Type aliases are supposed to make code more readable
+
+type User = String
+type Age = Int
+
+val data:  Map[User, Age] =  Map.empty
+
+** Duck Typing?
+
+*MailboxSpec.scala*
+
+    type MailBoxLike = {
+      def receive(a: String): String
+    }
+
+you can use MailBoxLike like a type, to describe the functionality you expect
+that type to provide
+    
+
+* Abstract Types
+
+*the type of food cannot be determined at the 'Animal' level, 
+every subclass defines it*
+
+class Food
+abstract class Animal {
+  type SuitableFood <: Food  // upper bound is 'Food' (requires subclass of 'Food')
+  def eat(food: SuitableFood)
+}
+
+class Grass extends Food
+class Cow extends Animal {
+  type SuitableFood = Grass  
+  override def eat(food: Grass) {}  // concrete method for this kind of 'Food'
+}
+  
+  - 'Cow' fixes its 'SuitableFood' to be 'Grass'
+  - 'SuitableFood' becomes alias for class 'Grass'
+
+* Functional Data Types
+
+
+- List, implemented as a functional data structure
+
+  - using it feels more like Lisp
+
+  - will come back to it at the end, where we integrate it into a type class example.
+
+* Phantom Types
+
+
+*PhantomSpec.scala*
+
+Types that are not instantiated, ever. Instead of using them directly, we use
+them to even more strictly enforce some logic, using our types.
+
+*sealed trait DoorState*
+*final class Open extends DoorState*
+*final class Closed extends DoorState*
+
+ You can enforce state using the type system:
+
+- Door can either be Open or Closed
+- Door starts off as Closed (see apply() method)
+- an Open Door cannot be Open, and a Closed Door cannot be Closed
+
+open[T >: State <: Closed]()  // expects the State to be Closed
+close[T >: State <: Open]()   // expects the State to be Open
+
+both open and close expect a type that's bound both upwards and downwards
+
+* Type Classes
+
+- A typeclass is represented by a parameterized trait, defining operations on
+  member types.
+
+- A type T is a member of typeclass TC[_] if there is a value of type TC[T]
+  available in implicit scope.
+
+- A context bound [T: TC] in the type parameter list for a class or method
+  asserts that T is a member of TC[_] (similar to [T <: U])
+
+  -- Credit for this definition goes to Dan Rosen
+
+* V1_WithTraitsSpec.scala
+
+sealed trait Expression
+case class Number(value: Int) extends Expression
+case class Plus(lhs: Expression, rhs: Expression) extends Expression
+case class Minus(lhs: Expression, rhs: Expression) extends Expression
+
+We want to add functionality to this data structure to:
+- evaluate expressions
+- write expression as Json
+
+Using inheritance, we modified Expression trait to inherit from both
+NumericConvertible and JsonConvertible
+
+*Advantages*
+  - simple; we just added functionality to each expression to implement each trait
+       
+*Disadvantages*
+  - we had to modify Expression trait; we may not be able to do that
+  - we tied together concerns about evaluating and formatting directly into the
+    ADT, which is not very clean
+
+* V2_ExternalEvalSpec.scala
+
+No inheritance, both ExprEvaluator and ExprToJsonFormatter use Expression
+
+*Advantages*
+  - Still pretty simple, and didn't have to change Expression ADT
+ 
+*Disadvantages:*
+  - JsonWriter expects a JsonValue, so it has not mechanism to allow clients to
+    provide converters; it would be nice to have a JsonConvertible that any type
+    that implements it could be passed to a JsonWriter.
+ 
+
+* V3_WithConverterSpec.scala
+
+ *Advantages*
+  - JsonWriter now uses the more flexible write method that accepts a JsonConverter
+  - we just have to define an asJsonConverter value (implementing JsonConverter) to be able to use it
+  - this mechanism is much more flexible
+
+ *Disadvantages*
+  - passing asJsonConverter along to JsonWriter is a little kludge
+  
+* V4_WithTypeClassesSpec.scala
+
+*Creating an Implicit argument*
+
+- JsonConverter can be given to write as a separate argument, through querying
+
+ [[~/Desktop/preso/v3_to_v4.png]]
+- 
+
+- which means that the client code doesn't have to pass the converter as an argument
+- this makes our code look much cleaner
+
+ [[~/Desktop/preso/v3_to_v4_client.png]]
+
+
+* V5_implicitlySpec.scala
+
+*Introducing Implicitly*
+
+- we don't have to provide the implicit argument to write
+- implicitly discovers a Json type class for T 
+
+ [[~/Desktop/preso/v4_to_v5.png]]
+
+* Adder and List
+
+
+[[~/Desktop/preso/AdderList.png]]
+
+
+* Credits and References
+
+Most of the code in this presentation has been extracted or inspired by other
+people's work.
+
+Here are some sites I found helpful:
+- http://ktoso.github.io/scala-types-of-types/
+- http://mbonaci.github.io/scala/#type-parameterization
+- https://www.youtube.com/watch?v=sVMES4RZF-8&feature=youtu.be
+- http://danielwestheide.com/blog/2013/02/06/the-neophytes-guide-to-scala-part-12-type-classes.html
+- http://www.drmaciver.com/2008/03/existential-types-in-scala/
