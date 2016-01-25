@@ -8,11 +8,13 @@ class TupelizeSpec extends path.FunSpec with Matchers {
 
   describe("wrap two values into a container") {
 
+    // wrapper of a pair of two types
     trait Container[C[_]] {
       def put[A](x: A): C[A]
       def get[A](m: C[A]): A
     }
 
+    // preserves type of each argument in pair
     def make_tuple[C[_] : Container, A, B]
     (fst: C[A], snd: C[B]): C[(A, B)] = {
       val c = implicitly[Container[C]]

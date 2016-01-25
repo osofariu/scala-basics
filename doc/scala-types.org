@@ -112,9 +112,7 @@ Array[Int], etc.
 -- David R. MacIver: "Existential types in Scala"
 
 
-* Some simple Examples
-
-*ExistentialIntroSpec.scala*
+* Some Simple Examples
 
     *case class Greets[T](private val name: T)* {
       def hello(): Unit = println("Hello " + name)
@@ -138,19 +136,15 @@ Array[Int], etc.
   *Question:*  How am I supposed to be able to receive this list?
 
 
-* Some options that make it possible to get hold of greetsList:
-
-    *This is what IntelliJ has suggested to me:*
-
-    val greetsList: List[Greets[_ >: Char with String with Symbol]] = greetsList
+* How can we make this work?
 
 
-    *you use a wildcard to indicate you don't care what type Greets holds:*
+    *You use a wildcard to indicate you don't care what type Greets holds:*
 
     val greetsList: List[Greets[_]] = greetsList
 
 
-    *same thing, but it's more explicit (and would allow you to set bounds on T)*
+    *... same thing, but it's more explicit*
 
     val greetsList: List[Greets[T] forSome {type T}] = greetsList
 
@@ -174,9 +168,22 @@ val data:  Map[User, Age] =  Map.empty
       def receive(a: String): String
     }
 
-you can use MailBoxLike like a type, to describe the functionality you expect
-that type to provide
+- you can use MailBoxLike like a type, to describe the functionality you expect
+  that type to provide
+- uses reflection, so there are performance implications
     
+* Making a Pair of different types (simpler example)
+
+*TupelizeSpec.scala*
+
+- Given a wrapper type C, and two types: A, B
+
+- make_tuple takes two arguments: C[A], and C[B], 
+  - and returns a pair: (C[A], C[B])
+
+- in the returned value, we can get hold of each pair, with its original type
+  - unlike list, where we generally expect the type to be the same for each element
+
 
 * A useful example of Existential Types
 
@@ -227,17 +234,6 @@ class Cow extends Animal {
   
   - 'Cow' fixes its 'SuitableFood' to be 'Grass'
   - 'SuitableFood' becomes alias for class 'Grass'
-
-
-* Functional Data Types
-
-*List.scala*
-
-- List, implemented as a functional data structure
-
-  - using it feels more like Lisp
-
-  - will come back to it at the end, where we integrate it into a type class example.
 
 
 * Phantom Types
@@ -359,6 +355,8 @@ Given Ints and Pairs of Ints we can:
 
 * Adder and List
 
+- List is implemented as a functional data type
+- Adder uses typeclasses to add specialized Adder implementations
 
 [[./preso/AdderList.png]]
 

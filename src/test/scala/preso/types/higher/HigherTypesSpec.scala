@@ -6,7 +6,7 @@ import scala.language.{higherKinds, reflectiveCalls}
 
 class HigherTypesSpec extends path.FunSpec with Matchers {
 
-  describe("examples of higher types") {
+  describe("examples of using type aliases") {
 
     it("Identity function type returns type it was given") {
       type Id[A] = A
@@ -14,21 +14,20 @@ class HigherTypesSpec extends path.FunSpec with Matchers {
       v shouldBe "foo"
     }
 
-    it("given id function and value, apply function to value") {
+    it("given id function and value, apply function to value - more type aliases") {
       type F[_] = (Int) => Int
       type I = Int
 
       val inc: F[I] = (i: Int) => i + 1
       inc(12) shouldBe 13
 
-      type Id[A[_], B] = A[B]
+      type Id[F[_], B] = F[B]
       def incFun: Id[F, Int] = (i: Int) => i + 1
       incFun(12) shouldBe 13
     }
   }
 
-
-  describe("Functor as higher type with map on a List") {
+  describe("Functor as higher type with map on a List with a specialized map function") {
 
     trait Functor[List[_]] {
       def map[Int, String](fn: Int => String)
@@ -44,11 +43,10 @@ class HigherTypesSpec extends path.FunSpec with Matchers {
 
     it("can run map over list of Strings") {
       functor.map((str: String) => str.length)(List[String]("Hi", "there")) shouldBe List(2, 5)
-
     }
   }
 
-  describe("Functor trait can be generalized further") {
+  describe("Functor trait can be generalized further by parameterizing the map function") {
 
     trait Functor[F[_]] {
       def map[A, B](fn: A => B)(fa: F[A]): F[B]
