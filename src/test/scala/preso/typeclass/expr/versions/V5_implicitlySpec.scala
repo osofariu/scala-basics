@@ -23,7 +23,7 @@ class V5_ImplicitlySpec extends path.FunSpec with Matchers {
           s"[${serializedEntries mkString ", "}]"
       }
 
-      // Expression is a member of the Json type cass
+      // Expression is a member of the Json type class
       def write[T : Json](value: T) : String = {
         write(implicitly[Json[T]].json(value))
       }

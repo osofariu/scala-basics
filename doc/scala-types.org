@@ -316,6 +316,8 @@ No inheritance, both ExprEvaluator and ExprToJsonFormatter use Expression
 
 * V3_WithConverterSpec.scala
 
+JsonWriter accepts JsonConverter (so anything convertible to JsonValue)
+
  *Advantages*
   - JsonWriter now uses the more flexible write method that accepts a JsonConverter
   - we just have to define an asJsonConverter value (implementing JsonConverter) to be able to use it
