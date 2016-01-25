@@ -30,12 +30,14 @@ class HOMapSpec extends path.FunSpec with Matchers {
 
     // HOMap : (( * => *) x (* => *)) => *
     class HOMap[K[_], V[_]](delegate: Map[K[_], V[_]]) {
+      // lookup-up value in map by key
       def apply[A](key: K[A]): V[A] = {
         delegate(key.asInstanceOf[K[A]]).asInstanceOf[V[A]]
       }
     }
 
     object HOMap {
+      // construct map from a variable number of pairs
       type Pair[K[_], V[_]] = (K[A], V[A]) forSome {type A}
       def apply[K[_], V[_]](tuples: Pair[K, V]*) = new HOMap[K, V](Map(tuples: _*))
     }

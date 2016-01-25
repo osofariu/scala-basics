@@ -87,3 +87,4 @@ class V6_WithPairSpec extends path.FunSpec with Matchers {
       JsonWriter.write(((1, 3), (2, 22))) shouldBe """{"fst": {"fst": 1, "snd": 3}, "snd": {"fst": 2, "snd": 22}}"""
     }
   }
+}

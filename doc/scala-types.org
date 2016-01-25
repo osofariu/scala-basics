@@ -48,20 +48,52 @@ This is a proper type.
 
 * Higher Types (Kinds)
 
+Think of *type constructors* as functions to construct types
+
+** type List :: * => *  (list has type: type to type)*
+
+List in Scala is not the equivalent of List<Object> in Java
+..it's not really a type!
+
 scala> :kind -v List
 scala.collection.immutable.List's kind is F[+A]
-\\ * -(+)-> *
+// * -(+)-> *
 This is a type constructor: a 1st-order-kinded type.
 
+** type Function1 :: ( * x *) => * (function has type (type cross type) to type)
 
 scala> def f(i: Int) = i.toString
 f: (i: Int)String
 
 scala> :kind -v f(_)
 scala.Function1's kind is F[-A1,+A2]
-\\ * -(-)-> * -(+)-> *
+// * -(-)-> * -(+)-> *
 This is a type constructor: a 1st-order-kinded type.
 
+* A more complex example
+
+scala> class Id[M[_], T](v: T)
+defined class Id
+
+scala> val id : Id[List, Int]  = new Id[List, Int](100)
+id: Id[List,Int] = Id@628b819d
+
+scala> :kind -v id
+Id's kind is X[F[A1],A2]
+(* -> *) -> * -> *
+This is a type constructor that takes type constructor(s): a higher-kinded type.
+
+
+scala> import language.higherKinds
+import language.higherKinds
+
+scala> class Functor [M[_]]
+defined class Functor
+
+scala> :kind -v Functor[List]
+Functor's kind is X[F[A]]
+(* -> *) -> *
+This is a type constructor that takes type constructor(s): a higher-kinded type.
 
 * Existential Types
 
@@ -108,18 +140,43 @@ Array[Int], etc.
 
 * Some options that make it possible to get hold of greetsList:
 
-    *This is what IntelliJ has suggested to me, but it's not very generic:*
+    *This is what IntelliJ has suggested to me:*
+
     val greetsList: List[Greets[_ >: Char with String with Symbol]] = greetsList
 
 
     *you use a wildcard to indicate you don't care what type Greets holds:*
+
     val greetsList: List[Greets[_]] = greetsList
 
 
     *same thing, but it's more explicit (and would allow you to set bounds on T)*
+
     val greetsList: List[Greets[T] forSome {type T}] = greetsList
 
 
+* Type Aliases and 'Duck Typing'-like behavior
+
+*HigherTypesSpec.scala*
+
+** Type aliases are supposed to make code more readable
+
+type User = String
+type Age = Int
+
+val data:  Map[User, Age] =  Map.empty
+
+** Duck Typing?
+
+*MailboxSpec.scala*
+
+    type MailBoxLike = {
+      def receive(a: String): String
+    }
+
+you can use MailBoxLike like a type, to describe the functionality you expect
+that type to provide
+    
 
 * A useful example of Existential Types
 
@@ -147,27 +204,9 @@ val xs: List[String] = map(Some("foo")).asInstanceOf[List[String]]
 you cannot assign a List[Any] to a List[String] because Any can contain types
 that cannot be mapped to String (1, Boolean, etc.)
 
+- Courtesy of: Daniel Spiewak, "High Wizardry in the Land of Scala"
 
-* Type Aliases and 'Duck Typing'-like behavior
 
-** Type aliases are supposed to make code more readable
-
-type User = String
-type Age = Int
-
-val data:  Map[User, Age] =  Map.empty
-
-** Duck Typing?
-
-*MailboxSpec.scala*
-
-    type MailBoxLike = {
-      def receive(a: String): String
-    }
-
-you can use MailBoxLike like a type, to describe the functionality you expect
-that type to provide
-    
 
 * Abstract Types
 
@@ -292,29 +331,36 @@ No inheritance, both ExprEvaluator and ExprToJsonFormatter use Expression
 
 - JsonConverter can be given to write as a separate argument, through querying
 
- [[~/Desktop/preso/v3_to_v4.png]]
+ [[./preso/v3_to_v4.png]]
 - 
 
 - which means that the client code doesn't have to pass the converter as an argument
 - this makes our code look much cleaner
 
- [[~/Desktop/preso/v3_to_v4_client.png]]
+ [[./preso/v3_to_v4_client.png]] 
 
 
-* V5_implicitlySpec.scala
+* V5_ImplicitlySpec.scala
 
 *Introducing Implicitly*
 
 - we don't have to provide the implicit argument to write
 - implicitly discovers a Json type class for T 
 
- [[~/Desktop/preso/v4_to_v5.png]]
+ [[./preso/v4_to_v5.png]]
+
+
+* V6_WithPairSpec.scala
+
+Given Ints and Pairs of Ints we can:
+- add arbitrarily recursive pairs
+- convert to Json arbitrarily recursive pairs 
 
 
 * Adder and List
 
 
-[[~/Desktop/preso/AdderList.png]]
+[[./preso/AdderList.png]]
 
 
 * Credits and References
@@ -324,8 +370,11 @@ people's work.
 
 Here are some sites I found helpful:
 
+- [[https://twitter.github.io/scala_school/][Scala School, from Twitter]]
 - [[http://ktoso.github.io/scala-types-of-types/][Scala types of types]]
 - [[http://mbonaci.github.io/scala/#type-parameterization][Java Developer's Scala Cheat Sheet]]
 - [[https://www.youtube.com/watch?v=sVMES4RZF-8&feature=youtu.be][Dan Rosen - Type classes]]
 - [[http://danielwestheide.com/blog/2013/02/06/the-neophytes-guide-to-scala-part-12-type-classes.html][Daniel Westheide]]
 - [[http://www.drmaciver.com/2008/03/existential-types-in-scala/][Existential types in Scala]]
+- [[https://vimeo.com/28793245][High Wizardry in the Land of Scala]]
+- [[http://stackoverflow.com/questions/15186520/scala-any-vs-underscore-in-generics][Stackoverflow: Any vs _]]
